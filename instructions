@@ -1,0 +1,66 @@
+Arduino patch saver for NTS1 (Rumpkin v0.3)
+
+I was going to record a series of videos on what it is and how it operates, but I ended up in hospital with some brain problems :/ so this has to do for now.
+
+Anyways, here it is:
+1. What it is: 
+   It is a patch saver for NTS1.
+
+2. How it works:
+   It receives patch changes from NTS1 as MIDI CCs via usb. 
+   When patch is finished it can be saved by pressing special key 
+   combination on NTS1 (more on that later). There are 4 slots to   
+   store the patches. Patches are sent to NTS1 also via MIDI USB.
+
+3. What do you need to make one: 
+   NTS1, computer, and Arduino with Atmega 32u4. I recommend 
+   Arduino DFRobot Beetle as it is cheap and meets all the  
+   requirements. Leonardo and its other clones should also be 
+   fine.
+   It cannot be any Arduino, as it has to natively support USB and 
+   have some non-volatile EEPROM memory to store the patches.
+
+4. How to install it:
+  a) Install Arduino IDE
+  b) From Arduino IDE install the following libraries: MIDIUSB, 
+  EEPROM, CircularBuffer.
+  c) From GitHub get Rumpkin v0.3 code 
+  (https://github.com/KubaRydel/Rumpkin). Open code with 
+  Arduino IDE and upload to your board.
+
+5. Setup:
+  Two way MIDI USB connection between NTS1 and Arduino is 
+  needed to operate the patch saver. One way to achieve it is via   
+  MIDI hub such as RK006. Alternatively, computer may serve as 
+  MIDIUSB hub. On MAC MIDIpipe may be used to achieve that.
+
+6. Operation:
+   Connect both NTS1 and then Arduino with Rumpkin software 
+   loaded to MIDIUSB hub of your choice. Then press any note on 
+   NTS1 keyboard (this is to set MIDI channel). When done  
+   correctly LED on Arduino should stop flashing. Then Arduino   
+   will "inject" patch from bank 1 to NTS1.
+
+   The first version that I have built required some soldering, but 
+   then I have relised that many of you may not have a soldering   
+   iron and that it would increase the cost of investment.
+   I thought about a way around it for a long time and eventually   
+   came up with sending commands to Arduino as MIDI CCs from   
+   NTS1. The problem is that all MIDI CCs on NTS1 are used so I 
+   decided to go with the most redundant (IMHO) one - ARP   
+   intervals.
+   All commands are sent to Arduino as a sequence of ARP 
+   interval changes. Imagine that you assign numbers 1-6 to OSC, 
+   FILTER, EG, MOD, DELAY and REVERB buttons. To activate   
+   command press ARP button and while holding it the buttons:
+         1/2/1/2 - save patch to current bank (to edit bank just edit it 
+         on NTS1, nothing else is required)
+         6/5/6/5 - change bank (automatically loads patch from new 
+         bank). There are 4 banks, each is signalised by LED on 
+         Arduino (1-on, 2-fast flashing, 3-moderate flashing, 4-slow 
+         flashing)
+         1/6/1/6 - randomise current patch
+         1/2/3/4 - reset current patch to default (has to be saved)
+
+This is all I have now. I'm sure I forgot something so please feel free to ask. When I'm out of here I can record a series of videos on how this operates etc. For now written description has to do.
+Cheers all!
